@@ -8,7 +8,7 @@ param (
 #Script Variables
 $FileContent = Get-Content "$Filepath"
 $ContentArray = $FileContent.split(",")
-$NumericArray = $ContentArray -match "^[\d\.+\d]+$"
+[int[]]$NumericArray = $ContentArray -match "^[\d\.+\d]+$"
 $AlphaArray = $ContentArray -match "^[A-Z]+$"
 
 #Numeric, Alpha, or Both -and Ascending vs. Descending
