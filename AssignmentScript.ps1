@@ -11,7 +11,7 @@ $ContentArray = $FileContent.split(",")
 $NumericArray = $ContentArray -match "^[\d\.+\d]+$"
 $AlphaArray = $ContentArray -match "^[A-Z]+$"
 
-
+#Numeric, Alpha, or Both -and Ascending vs. Descending
 if (($DataType -match "Numeric") -and ($SortOrder -match "Ascending")) {
     $NumericArray | Sort-Object
 }
