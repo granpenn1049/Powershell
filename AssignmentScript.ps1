@@ -5,21 +5,22 @@ param (
     [String]$DataType = "Numeric" -or "Alpha" -or "Both"
 )
 
+#Script Variables
 $FileContent = Get-Content "$Filepath"
 $ContentArray = $FileContent.split(",")
-$IntArray = $ContentArray -match "^[\d\.+\d]+$"
-$StringArrary = $ContentArray -match "^[A-Z]+$"
+$NumericArray = $ContentArray -match "^[\d\.+\d]+$"
+$AlphaArray = $ContentArray -match "^[A-Z]+$"
 
 #Numeric, Alpha, or Both -Ascending
 if(($DataType -eq "Numeric") -and ($SortOrder -eq "Ascending")) {
-    $IntArray | Sort-Object
+    $NumericArray | Sort-Object
     break
 }
 elseif(($DataType -eq "Alpha") -and ($SortOrder -eq "Ascending")) {
-    $StringArray | Sort-Object
+    $AlphaArray | Sort-Object
 }
 elseif(($DataType -eq "Both") -and ($SortOrder -eq "Ascending")) {
-    $IntArray+$StringArrary | Sort-Object
+    $NumericArray+$AlphaArray | Sort-Object
 }
 else {
     Write-Error 'Must pass in $Filepath, $SortOrder ("Ascending" or "Descending"), and $DataType ("Numeric", "Alpha", or "Both")'
@@ -27,13 +28,13 @@ else {
 
 #Numeric, Alpha, or Both -Descending
 if(($DataType -eq "Numeric") -and ($SortOrder -eq "Descending")) {
-    $IntArray | Sort-Object -Descending
+    $NumericArray | Sort-Object -Descending
 }
 elseif(($DataType -eq "Alpha") -and ($SortOrder -eq "Descending")) {
-    $StringArray | Sort-Object -Descending
+    $AlphaArray | Sort-Object -Descending
 }
 elseif(($DataType -eq "Both") -and ($SortOrder -eq "Descending")) {
-    $IntArray+$StringArrary | Sort-Object -Descending
+    $NumericArray+$AlphaArray | Sort-Object -Descending
 }
 else {
     Write-Error 'Must pass in $Filepath, $SortOrder ("Ascending" or "Descending"), and $DataType ("Numeric", "Alpha", or "Both")'
