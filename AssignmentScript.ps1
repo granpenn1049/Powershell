@@ -1,4 +1,4 @@
-#Arrays
+#Script Parameters
 param (
     [String]$Filepath,
     [String]$SortOrder = "Ascending" -or "Descending",
@@ -7,33 +7,40 @@ param (
 
 #Script Variables
 $FileContent = Get-Content "$Filepath"
-$ContentArray = $FileContent.split(",")
-[decimal[]]$IntArray = $ContentArray -match "^[\d\.+\d]+$"
-$AlphaArray = $ContentArray -match "^[A-Z]+$"
-[decimal[]]$exponentStrings = $ContentArray | Where-Object { $_ -match '^\d+e[+-]?\d+$' }
-[decimal[]]$NumericArray = $IntArray+$exponentStrings
+$FileContentArray = $FileContent.split(",")
 
-#Numeric, Alpha, or Both -and Ascending vs. Descending
+#Numeric Array Varialbes
+[Decimal[]]$IntArray = $FileContentArray -match "^[\d\.]+$"
+[Decimal[]]$ExponentArray = $FileContentArray -match '^\d+e[+-]?\d+$'
+[Decimal[]]$NumericArray = $IntArray + $ExponentArray
+
+#Alphabetic Array Variables
+[String[]]$LetterArray = $FileContentArray -match "^[A-Z]+$"
+[String[]]$QuoteArray = $FileContentArray -match "'([^']*)'"
+[String[]]$AlphaArray = $LetterArray + $QuoteArray
+
+#Numeric, Alpha, or Both and Ascending vs. Descending Logic
 if (($DataType -match "Numeric") -and ($SortOrder -match "Ascending")) {
-    $NumericArray | Sort-Object
+    $Result = (($NumericArray | Sort-Object) -join ",")
 }
 elseif (($DataType -match "Alpha") -and ($SortOrder -match "Ascending")) {
-    $AlphaArray | Sort-Object
+    $Result = (($AlphaArray | Sort-Object) -join ",")
 }
 elseif (($DataType -match "Both") -and ($SortOrder -match "Ascending")) {
-    $NumericArray | Sort-Object
-    $AlphaArray | Sort-Object
+    $Result = (($NumericArray | Sort-Object) -join ",") + "," + (($AlphaArray | Sort-Object) -join ",")
 }
 elseif (($DataType -match "Numeric") -and ($SortOrder -match "Descending")) {
-    $NumericArray | Sort-Object -Descending
+    $Result = (($NumericArray | Sort-Object -descending) -join ",")
 }
 elseif (($DataType -match "Alpha") -and ($SortOrder -match "Descending")) {
-    $AlphaArray | Sort-Object -Descending
+    $Result = (($AlphaArray | Sort-Object -descending) -join ",")
 }
 elseif (($DataType -match "Both") -and ($SortOrder -match "Descending")) {
-    $NumericArray | Sort-Object -Descending
-    $AlphaArray | Sort-Object -Descending
+    $Result = (($NumericArray | Sort-Object -descending) -join ",") + "," + (($AlphaArray | Sort-Object -Descending) -join ",")
 }
 else {
-    Write-Error 'Must pass in $Filepath (filepath of .txt file), $SortOrder ("Ascending" or "Descending"), and $DataType ("Numeric", "Alpha", or "Both")'
+    Write-Error 'Must pass in the following parameters: $Filepath (Filepath of .txt file), $SortOrder ("Ascending" or "Descending"), and $DataType ("Numeric", "Alpha", or "Both")'
 }
+
+$FinalResult = '"' + $Result + '"'
+$FinalResult
